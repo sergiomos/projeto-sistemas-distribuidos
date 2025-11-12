@@ -1,15 +1,21 @@
+#!/usr/bin/env python3
 import zmq
 
-context = zmq.Context()
+def main():
+    context = zmq.Context()
+    
+    # XSUB para publishers
+    xsub = context.socket(zmq.XSUB)
+    xsub.bind("tcp://*:5557")
+    
+    # XPUB para subscribers
+    xpub = context.socket(zmq.XPUB)
+    xpub.bind("tcp://*:5558")
+    
+    print("Proxy Pub/Sub iniciado")
+    
+    # Proxy para pub/sub
+    zmq.proxy(xsub, xpub)
 
-pub = context.socket(zmq.XPUB)
-pub.bind("tcp://*:5558")
-
-sub = context.socket(zmq.XSUB)
-sub.bind("tcp://*:5557")
-
-zmq.proxy(pub, sub)
-
-pub.close()
-sub.close()
-context.close()
+if __name__ == "__main__":
+    main()
