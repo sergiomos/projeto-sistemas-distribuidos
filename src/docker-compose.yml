@@ -1,59 +1,79 @@
 services:
   broker:
     build:
-      context: .
-      dockerfile: Dockerfile
-    image: cc7261:proj
+      context: ./broker
+      dockerfile: ../Dockerfile.python
     container_name: broker
-    volumes:
-      - ./broker:/app
     ports:
-      - 5555:5555
-      - 5556:5556
+      - "5555:5555"
+      - "5556:5556"
+    networks:
+      - messaging
 
   proxy:
     build:
-      context: .
-      dockerfile: Dockerfile
-    image: cc7261:proj
+      context: ./proxy
+      dockerfile: ../Dockerfile.python
     container_name: proxy
-    volumes:
-      - ./proxy:/app
     ports:
-      - 5557:5557
-      - 5558:5558
+      - "5557:5557"
+      - "5558:5558"
+    networks:
+      - messaging
+
+  reference:
+    build:
+      context: ./reference
+      dockerfile: ../Dockerfile.python
+    container_name: reference
+    ports:
+      - "5559:5559"
+    networks:
+      - messaging
 
   server:
     build:
-      context: .
-      dockerfile: Dockerfile
-    image: cc7261:proj
+      context: ./server
+      dockerfile: ../Dockerfile.python
     volumes:
-      - ./server:/app
+      - server-data:/app/data
     depends_on:
       - broker
       - proxy
+      - reference
+    networks:
+      - messaging
+    deploy:
+      replicas: 3
 
   client:
     build:
-      context: .
-      dockerfile: Dockerfile
-    image: cc7261:proj
+      context: ./client
+      dockerfile: ../Dockerfile.node
     stdin_open: true
     tty: true
     depends_on:
+      - broker
+      - proxy
+    networks:
+      - messaging
+
+  bot:
+    build:
+      context: ./bot
+      dockerfile: ../Dockerfile.go
+    depends_on:
+      - broker
+      - proxy
       - server
-    volumes:
-      - ./client:/app
+    networks:
+      - messaging
     deploy:
       replicas: 2
 
-  listener:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: cc7261:proj
-    volumes:
-      - ./listener:/app
-    depends_on:
-      - proxy
+networks:
+  messaging:
+    driver: bridge
+
+volumes:
+  server-data:
