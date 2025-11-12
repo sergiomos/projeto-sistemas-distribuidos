@@ -1,0 +1,10 @@
+# Data directories
+data/
+*/data/
+
+# Logs
+*.log
+
+# Node modules
+node_modules/
+
