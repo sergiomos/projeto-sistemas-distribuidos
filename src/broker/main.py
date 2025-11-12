@@ -1,15 +1,21 @@
+#!/usr/bin/env python3
 import zmq
 
-context = zmq.Context()
+def main():
+    context = zmq.Context()
+    
+    # Socket para clientes (ROUTER)
+    client_socket = context.socket(zmq.ROUTER)
+    client_socket.bind("tcp://*:5555")
+    
+    # Socket para servidores (DEALER) - balanceamento round-robin
+    server_socket = context.socket(zmq.DEALER)
+    server_socket.bind("tcp://*:5556")
+    
+    print("Broker iniciado - Balanceamento de carga entre clientes e servidores")
+    
+    # Proxy para balanceamento automático
+    zmq.proxy(client_socket, server_socket)
 
-client_socket = context.socket(zmq.ROUTER)
-client_socket.bind("tcp://*:5555")
-
-server_socket = context.socket(zmq.DEALER)
-server_socket.bind("tcp://*:5556")
-
-zmq.proxy(client_socket, server_socket)
-
-client_socket.close()
-server_socket.close()
-context.term()
+if __name__ == "__main__":
+    main()
