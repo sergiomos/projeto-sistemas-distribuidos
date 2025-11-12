@@ -1,15 +1,13 @@
 {
   "name": "client",
   "version": "1.0.0",
-  "description": "",
+  "description": "Cliente do sistema de mensagens",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node main.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "zeromq": "^6.5.0"
+    "zeromq": "^6.0.0-beta.20",
+    "msgpack-lite": "^0.1.26"
   }
 }
