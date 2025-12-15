@@ -4,10 +4,10 @@ RUN apk add --no-cache git zeromq-dev build-base
 
 WORKDIR /app
 
-COPY go.mod go.sum* ./
-RUN go mod download
+COPY go.mod ./
+COPY main.go ./
 
-COPY . .
+RUN go mod download && go mod tidy
 
 RUN go build -o bot main.go
 

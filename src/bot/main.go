@@ -10,8 +10,8 @@ import (
 )
 
 type Message struct {
-	Service string                 `json:"service"`
-	Data    map[string]interface{} `json:"data"`
+	Service string                 `msgpack:"service"`
+	Data    map[string]interface{} `msgpack:"data"`
 }
 
 type Bot struct {
