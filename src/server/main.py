@@ -43,8 +43,13 @@ class Server:
     def load_users(self):
         """Carrega usuários do disco"""
         if os.path.exists(USERS_FILE):
-            with open(USERS_FILE, 'r') as f:
-                return json.load(f)
+            try:
+                with open(USERS_FILE, 'r') as f:
+                    content = f.read()
+                    if content.strip():
+                        return json.loads(content)
+            except (json.JSONDecodeError, ValueError) as e:
+                print(f"Aviso: Arquivo de usuários corrompido, reiniciando: {e}")
         return {}
 
     def save_users(self):
@@ -55,8 +60,13 @@ class Server:
     def load_channels(self):
         """Carrega canais do disco"""
         if os.path.exists(CHANNELS_FILE):
-            with open(CHANNELS_FILE, 'r') as f:
-                return json.load(f)
+            try:
+                with open(CHANNELS_FILE, 'r') as f:
+                    content = f.read()
+                    if content.strip():
+                        return json.loads(content)
+            except (json.JSONDecodeError, ValueError) as e:
+                print(f"Aviso: Arquivo de canais corrompido, reiniciando: {e}")
         return []
 
     def save_channels(self):
@@ -68,8 +78,14 @@ class Server:
         """Salva mensagem no disco"""
         messages = []
         if os.path.exists(MESSAGES_FILE):
-            with open(MESSAGES_FILE, 'r') as f:
-                messages = json.load(f)
+            try:
+                with open(MESSAGES_FILE, 'r') as f:
+                    content = f.read()
+                    if content.strip():  # Verifica se não está vazio
+                        messages = json.loads(content)
+            except (json.JSONDecodeError, ValueError) as e:
+                print(f"[{self.server_name}] Aviso: Arquivo de mensagens corrompido, reiniciando: {e}")
+                messages = []
         messages.append(message_data)
         with open(MESSAGES_FILE, 'w') as f:
             json.dump(messages, f, indent=2)
@@ -78,8 +94,14 @@ class Server:
         """Salva publicação no disco"""
         publications = []
         if os.path.exists(PUBLICATIONS_FILE):
-            with open(PUBLICATIONS_FILE, 'r') as f:
-                publications = json.load(f)
+            try:
+                with open(PUBLICATIONS_FILE, 'r') as f:
+                    content = f.read()
+                    if content.strip():  # Verifica se não está vazio
+                        publications = json.loads(content)
+            except (json.JSONDecodeError, ValueError) as e:
+                print(f"[{self.server_name}] Aviso: Arquivo de publicações corrompido, reiniciando: {e}")
+                publications = []
         publications.append(publication_data)
         with open(PUBLICATIONS_FILE, 'w') as f:
             json.dump(publications, f, indent=2)
