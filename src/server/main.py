@@ -535,7 +535,10 @@ class Server:
                     
                     if topic_str == "servers":
                         self.coordinator = data.get("coordinator")
-                        print(f"[{self.server_name}] Novo coordenador: {self.coordinator}")
+                        coordinator_rank = data.get("rank", "?")
+                        is_coordinator = (self.coordinator == self.server_name)
+                        status = "EU SOU O COORDENADOR!" if is_coordinator else f"Coordenador é {self.coordinator}"
+                        print(f"[{self.server_name}] ⚡ ELEIÇÃO: {status} (rank={coordinator_rank}, Clock={self.logical_clock})")
                     elif topic_str == "replication":
                         self.handle_replication(data)
                     
